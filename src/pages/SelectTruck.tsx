@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+const STORAGE_KEY = 'truckCloseDown.selectedTruckId';
+
 const trucks = [
   { id: 'sos-21', label: 'SOS-21 • 20ft Box Truck' },
   { id: 'sos-08', label: 'SOS-08 • 26ft Liftgate' },
@@ -8,7 +10,13 @@ const trucks = [
 ];
 
 export function SelectTruck() {
-  const [selectedTruck, setSelectedTruck] = useState<string>('');
+  const [selectedTruck, setSelectedTruck] = useState<string>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEY) ?? '';
+    } catch {
+      return '';
+    }
+  });
 
   return (
     <section className="card space-y-6">
@@ -24,7 +32,14 @@ export function SelectTruck() {
           <button
             key={truck.id}
             type="button"
-            onClick={() => setSelectedTruck(truck.id)}
+            onClick={() => {
+              setSelectedTruck(truck.id);
+              try {
+                localStorage.setItem(STORAGE_KEY, truck.id);
+              } catch {
+                // ignore storage errors
+              }
+            }}
             className={`w-full rounded-xl border p-4 text-left transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-accent ${
               selectedTruck === truck.id
                 ? 'border-brand-accent bg-brand-accent/10'
@@ -38,9 +53,7 @@ export function SelectTruck() {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <p className="text-sm text-brand-dark/70">
-          Not seeing your truck? Tap support in the footer.
-        </p>
+        <p className="text-sm text-brand-dark/70">Not seeing your truck? Tap support in the footer.</p>
         <Link to="/checklist" className={`button-primary ${selectedTruck ? '' : 'pointer-events-none opacity-50'}`}>
           Continue to checklist
         </Link>
