@@ -78,8 +78,6 @@ export function ReviewSubmit() {
               completed_items: completedItems,
               notes,
               driver_name: driverName || null,
-              app_secret: import.meta.env.VITE_APP_SECRET,
-
             });
 
             if (error) {
