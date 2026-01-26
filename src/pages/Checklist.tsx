@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 type ChecklistSection = {
@@ -21,12 +21,40 @@ const checklist: ChecklistSection[] = [
   },
 ];
 
+const STORAGE_KEY = 'truckCloseDown.completedItems';
+
 export function Checklist() {
-  const [completedItems, setCompletedItems] = useState<Record<string, boolean>>({});
+  const [completedItems, setCompletedItems] = useState<Record<string, boolean>>(() => {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
+    } catch {
+      return {};
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(completedItems));
+    } catch {
+      // ignore storage errors
+    }
+  }, [completedItems]);
 
   const toggleItem = (item: string) => {
-    setCompletedItems((prev) => ({ ...prev, [item]: !prev[item] }));
-  };
+  setCompletedItems((prev) => {
+    const next = { ...prev, [item]: !prev[item] };
+
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      // ignore storage errors
+    }
+
+    return next;
+  });
+};
+
 
   const completedCount = Object.values(completedItems).filter(Boolean).length;
   const totalCount = checklist.reduce((total, section) => total + section.items.length, 0);
