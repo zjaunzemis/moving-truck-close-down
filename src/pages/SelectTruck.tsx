@@ -21,7 +21,7 @@ export function SelectTruck() {
   return (
     <section className="card space-y-6">
       <header className="space-y-2">
-        <h2 className="text-2xl font-semibold text-brand-dark">Select your truck</h2>
+        <h2 className="text-2xl font-semibold text-brand-dark">Select Vehicle</h2>
         <p className="text-sm text-brand-dark/70">
           Choose the vehicle you just returned. This helps us tie your checklist to the right asset.
         </p>

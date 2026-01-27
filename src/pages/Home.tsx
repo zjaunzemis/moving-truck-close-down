@@ -4,19 +4,21 @@ export function Home() {
   return (
     <section className="card space-y-6">
       <div className="space-y-2">
-        <h2 className="text-2xl font-semibold text-brand-dark">Welcome crew!</h2>
+        <h2 className="text-2xl font-semibold text-brand-dark">Truck Close-Down Checklist</h2>
+
         <p className="text-brand-dark/80">
-          This checklist keeps our moving truck shut-down process consistent and safe. Work through each
-          step to make sure the vehicle is ready for tomorrow&apos;s jobs.
+          Complete this end-of-day close-down report before leaving the vehicle. This process ensures trucks are ready for the next service day and records compliance activity.
+
         </p>
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-xl bg-brand-light/60 p-4">
           <h3 className="text-lg font-semibold text-brand-dark">What you&apos;ll need</h3>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-brand-dark/80">
-            <li>Tablet or phone with this app open</li>
-            <li>Truck mileage and fuel info</li>
-            <li>Cleaning supplies &amp; inspection notes</li>
+            <li>Phone or tablet with this checklist open</li>
+<li>Inspection notes for cleanliness, damage, or missing equipment</li>
+<li>Any relevant end-of-day observations</li>
+
           </ul>
         </div>
         <div className="rounded-xl bg-brand-light/60 p-4">
@@ -30,7 +32,8 @@ export function Home() {
       </div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <p className="text-sm text-brand-dark/70">
-          Need help? Contact the SOS logistics lead or check the laminated quick guide in the glove box.
+          Questions or issues should be reported to management.
+
         </p>
         <Link to="/select-truck" className="button-primary">
           Get started
