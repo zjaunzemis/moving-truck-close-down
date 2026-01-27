@@ -9,6 +9,8 @@ const TRUCK_KEY = 'truckCloseDown.selectedTruckId';
 export function ReviewSubmit() {
   const [notes, setNotes] = useState('');
   const [driverName, setDriverName] = useState('');
+  const [confirmed, setConfirmed] = useState(false);
+
 
   return (
     <section className="card space-y-6">
@@ -42,10 +44,15 @@ export function ReviewSubmit() {
 
         <label className="flex items-center gap-3 text-sm text-brand-dark/80">
           <input
-            type="checkbox"
-            className="h-5 w-5 rounded border-brand-dark text-brand-accent focus:ring-brand-accent"
-          />
-          I confirm the truck has been locked, lights off, and keys returned to the drop box.
+  type="checkbox"
+  checked={confirmed}
+  onChange={(e) => setConfirmed(e.target.checked)}
+  className="h-5 w-5 rounded border-brand-dark text-brand-accent focus:ring-brand-accent"
+/>
+
+          I confirm this close-down report is complete and accurate.
+
+
         </label>
       </div>
 
@@ -55,9 +62,11 @@ export function ReviewSubmit() {
         </Link>
 
         <button
-          type="button"
-          className="button-primary"
-          onClick={async () => {
+  type="button"
+  className={`button-primary ${!confirmed ? 'opacity-50 cursor-not-allowed' : ''}`}
+  disabled={!confirmed}
+  onClick={async () => {
+
             const truckId = localStorage.getItem(TRUCK_KEY);
             if (!truckId) {
               alert('No truck selected. Please go back and select a truck.');
