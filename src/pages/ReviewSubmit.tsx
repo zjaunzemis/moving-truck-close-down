@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
 
 import { supabase } from '../lib/supabaseClient';
 
@@ -7,9 +8,33 @@ const CHECKLIST_KEY = 'truckCloseDown.completedItems';
 const TRUCK_KEY = 'truckCloseDown.selectedTruckId';
 
 export function ReviewSubmit() {
+  const navigate = useNavigate();
   const [notes, setNotes] = useState('');
   const [driverName, setDriverName] = useState('');
   const [confirmed, setConfirmed] = useState(false);
+useEffect(() => {
+  const truckId = localStorage.getItem('truckCloseDown.selectedTruckId');
+  if (!truckId) {
+    navigate('/select-truck');
+    return;
+  }
+
+  const rawChecklist = localStorage.getItem('truckCloseDown.completedItems');
+  if (!rawChecklist) {
+    navigate('/checklist');
+    return;
+  }
+
+  try {
+    const parsed = JSON.parse(rawChecklist) as Record<string, boolean>;
+    const anyChecked = Object.values(parsed).some(Boolean);
+    if (!anyChecked) {
+      navigate('/checklist');
+    }
+  } catch {
+    navigate('/checklist');
+  }
+}, [navigate]);
 
 
   return (
