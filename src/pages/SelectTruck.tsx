@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
 const STORAGE_KEY = 'truckCloseDown.selectedTruckId';
 
 const trucks = [
@@ -12,25 +11,20 @@ const trucks = [
 
 export function SelectTruck() {
   const navigate = useNavigate();
+  const [selectedTruck, setSelectedTruck] = useState<string>('');
 
-  const [selectedTruck, setSelectedTruck] = useState<string>(() => {
+  // Driver-safe: require explicit selection every time you enter this page
+useEffect(() => {
+  try {
+    localStorage.removeItem('truckCloseDown.selectedTruckId');
+    localStorage.removeItem('truckCloseDown.completedItems');
+    localStorage.removeItem('truckCloseDown.driverName');
+    localStorage.removeItem('truckCloseDown.notes');
+  } catch {
+    // ignore storage errors
+  }
+}, []);
 
-    try {
-      return localStorage.getItem(STORAGE_KEY) ?? '';
-    } catch {
-      return '';
-    }
-  });
-
-  // Persist selection
-  useEffect(() => {
-    if (!selectedTruck) return;
-    try {
-      localStorage.setItem(STORAGE_KEY, selectedTruck);
-    } catch {
-      // ignore storage errors
-    }
-  }, [selectedTruck]);
 
   return (
     <section className="card space-y-6">
@@ -46,7 +40,14 @@ export function SelectTruck() {
           <button
             key={truck.id}
             type="button"
-            onClick={() => setSelectedTruck(truck.id)}
+            onClick={() => {
+              setSelectedTruck(truck.id);
+              try {
+                localStorage.setItem(STORAGE_KEY, truck.id);
+              } catch {
+                // ignore storage errors
+              }
+            }}
             className={`w-full rounded-xl border p-4 text-left transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-accent ${
               selectedTruck === truck.id
                 ? 'border-brand-accent bg-brand-accent/10'
@@ -60,23 +61,19 @@ export function SelectTruck() {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <p className="text-sm text-brand-dark/70">
-          Not seeing your truck? Contact fleet support.
-        </p>
-<p className="text-xs text-brand-dark/60">DEBUG selectedTruck: {selectedTruck || '(none)'}</p>
+        <p className="text-sm text-brand-dark/70">Not seeing your truck? Contact fleet support.</p>
 
         <button
-  type="button"
-  className="button-primary pointer-events-auto cursor-pointer"
-  onClick={() => {
-    console.log('CONTINUE CLICK', { selectedTruck });
-    navigate('/checklist');
-  }}
->
-  Continue to checklist
-</button>
-
-
+          type="button"
+          className={`button-primary ${selectedTruck ? '' : 'opacity-50'}`}
+          disabled={!selectedTruck}
+          onClick={() => {
+            if (!selectedTruck) return;
+            navigate('/checklist');
+          }}
+        >
+          Continue to checklist
+        </button>
       </div>
     </section>
   );
