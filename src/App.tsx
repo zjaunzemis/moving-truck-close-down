@@ -4,6 +4,8 @@ import { SelectTruck } from './pages/SelectTruck.tsx';
 import { Checklist } from './pages/Checklist.tsx';
 import { ReviewSubmit } from './pages/ReviewSubmit.tsx';
 
+const isDriverMode = true;
+
 const navItems = [
   { to: '/', label: 'Home' },
   { to: '/select-truck', label: 'Select Truck' },
@@ -20,24 +22,27 @@ function App() {
             <p className="text-sm uppercase tracking-widest text-brand-accent">SOS Logistics</p>
             <h1 className="text-2xl font-semibold">Moving Truck Close-Down Checklist</h1>
           </div>
-          <nav className="flex flex-wrap justify-center gap-2 text-sm font-medium">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={({ isActive }) =>
-                  `rounded-full px-4 py-2 transition-colors ${
-                    isActive
-                      ? 'bg-brand-accent text-white shadow'
-                      : 'bg-white/10 text-white hover:bg-white/20'
-                  }`
-                }
-                end={item.to === '/'}
-              >
-                {item.label}
-              </NavLink>
-            ))}
-          </nav>
+{!isDriverMode && (
+  <nav className="flex flex-wrap justify-center gap-2 text-sm font-medium">
+    {navItems.map((item) => (
+      <NavLink
+        key={item.to}
+        to={item.to}
+        className={({ isActive }) =>
+          `rounded-full px-4 py-2 transition-colors ${
+            isActive
+              ? 'bg-brand-accent text-white shadow'
+              : 'bg-white/10 text-white hover:bg-white/20'
+          }`
+        }
+        end={item.to === '/'}
+      >
+        {item.label}
+      </NavLink>
+    ))}
+  </nav>
+)}
+
         </div>
       </header>
 
