@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const STORAGE_KEY = 'truckCloseDown.selectedTruckId';
 
@@ -10,20 +10,28 @@ const trucks = [
 ];
 
 export function SelectTruck() {
-  const [selectedTruck, setSelectedTruck] = useState<string>(() => {
-    try {
-      return localStorage.getItem(STORAGE_KEY) ?? '';
-    } catch {
-      return '';
-    }
-  });
+  const navigate = useNavigate();
+  const [selectedTruck, setSelectedTruck] = useState<string>('');
+
+  // Driver-safe: require explicit selection every time you enter this page
+useEffect(() => {
+  try {
+    localStorage.removeItem('truckCloseDown.selectedTruckId');
+    localStorage.removeItem('truckCloseDown.completedItems');
+    localStorage.removeItem('truckCloseDown.driverName');
+    localStorage.removeItem('truckCloseDown.notes');
+  } catch {
+    // ignore storage errors
+  }
+}, []);
+
 
   return (
     <section className="card space-y-6">
       <header className="space-y-2">
         <h2 className="text-2xl font-semibold text-brand-dark">Select Vehicle</h2>
         <p className="text-sm text-brand-dark/70">
-          Choose the vehicle you just returned. This helps us tie your checklist to the right asset.
+          Choose the vehicle you just returned. This ties your close-down report to the correct asset.
         </p>
       </header>
 
@@ -53,10 +61,19 @@ export function SelectTruck() {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <p className="text-sm text-brand-dark/70">Not seeing your truck? Tap support in the footer.</p>
-        <Link to="/checklist" className={`button-primary ${selectedTruck ? '' : 'pointer-events-none opacity-50'}`}>
+        <p className="text-sm text-brand-dark/70">Not seeing your truck? Contact fleet support.</p>
+
+        <button
+          type="button"
+          className={`button-primary ${selectedTruck ? '' : 'opacity-50'}`}
+          disabled={!selectedTruck}
+          onClick={() => {
+            if (!selectedTruck) return;
+            navigate('/checklist');
+          }}
+        >
           Continue to checklist
-        </Link>
+        </button>
       </div>
     </section>
   );
