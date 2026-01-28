@@ -1,5 +1,8 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+
+
+
 
 type ChecklistSection = {
   title: string;
@@ -24,8 +27,18 @@ const checklist: ChecklistSection[] = [
 const STORAGE_KEY = 'truckCloseDown.completedItems';
 
 export function Checklist() {
+  const navigate = useNavigate();
+
   const [completedItems, setCompletedItems] = useState<Record<string, boolean>>(() => {
     try {
+     useEffect(() => {
+  const truckId = localStorage.getItem('truckCloseDown.selectedTruckId');
+  if (!truckId) {
+    navigate('/select-truck');
+  }
+}, [navigate]);
+
+
       const raw = localStorage.getItem(STORAGE_KEY);
       return raw ? (JSON.parse(raw) as Record<string, boolean>) : {};
     } catch {
@@ -34,12 +47,12 @@ export function Checklist() {
   });
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(completedItems));
-    } catch {
-      // ignore storage errors
-    }
-  }, [completedItems]);
+  const truckId = localStorage.getItem('truckCloseDown.selectedTruckId');
+  if (!truckId) {
+    navigate('/select-truck');
+  }
+}, [navigate]);
+
 
   const toggleItem = (item: string) => {
   setCompletedItems((prev) => {
